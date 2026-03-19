@@ -303,53 +303,36 @@ function PatternCard({ pattern, isOpen, onToggle, index }) {
 // ── Analyzer ──────────────────────────────────────────────────────────────────
 
 function Analyzer({ input, setInput }) {
-  const apiKey = import.meta.env.VITE_ANTHROPIC_API_KEY
   const [isAnalyzing, setIsAnalyzing] = useState(false)
   const [result, setResult]           = useState(null)
   const [error, setError]             = useState(null)
-  const abortRef                      = useRef(null)
 
-  const handleAnalyze = useCallback(async () => {
+  const handleAnalyze = async () => {
     if (!input.trim() || isAnalyzing) return
-    if (!apiKey || apiKey.startsWith('placeholder')) return
     setIsAnalyzing(true)
     setResult(null)
     setError(null)
 
     try {
-      abortRef.current = new AbortController()
-      const res = await fetch('https://api.anthropic.com/v1/messages', {
+      const response = await fetch('/api/analyze', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'x-api-key': apiKey,
-          'anthropic-version': '2023-06-01',
-          'anthropic-dangerous-direct-browser-access': 'true',
-        },
-        signal: abortRef.current.signal,
-        body: JSON.stringify({
-          model: 'claude-sonnet-4-20250514',
-          max_tokens: 800,
-          system: `You are a UI/UX analyst specializing in AI trust design for security operations interfaces. You evaluate design decisions against six trust patterns: Confidence Calibration, Reasoning Visibility, Human Control, Auditability, Graceful Failure, and Alert Fatigue Reduction. Respond only with valid JSON, no markdown.`,
-          messages: [{
-            role: 'user',
-            content: `Evaluate this design decision: ${input}\n\nRespond with JSON only:\n{"pattern": "string (which trust pattern applies most)", "verdict": "DO or DONT", "analysis": "string (2-3 sentences explaining why)", "recommendation": "string (one concrete improvement)"}`,
-          }],
-        }),
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ input }),
       })
 
-      const data = await res.json()
-      if (data.error) { setError(data.error.message); return }
+      const data = await response.json()
 
-      const raw     = data.content.filter(b => b.type === 'text').map(b => b.text).join('')
-      const cleaned = raw.replace(/```json|```/g, '').trim()
-      setResult(JSON.parse(cleaned))
+      if (!response.ok) {
+        throw new Error(data.error || 'Analysis failed')
+      }
+
+      setResult(data)
     } catch (e) {
-      if (e.name !== 'AbortError') setError('Could not analyze. Check your connection and try again.')
+      setError(e.message)
     } finally {
       setIsAnalyzing(false)
     }
-  }, [input, isAnalyzing])
+  }
 
   const handleKeyDown = (e) => {
     if ((e.metaKey || e.ctrlKey) && e.key === 'Enter') { e.preventDefault(); handleAnalyze() }
@@ -392,14 +375,6 @@ function Analyzer({ input, setInput }) {
 
       {/* Output area */}
       <div className="mt-8">
-        {(!apiKey || apiKey.startsWith('placeholder')) && (
-          <div className="bg-surface border border-amber-500/20 rounded-sm p-4 mt-4">
-            <p className="font-mono text-xs text-amber-400/80">
-              ⚠ API key not configured — add your Anthropic key to .env to enable live analysis
-            </p>
-          </div>
-        )}
-
         {isAnalyzing && (
           <p className="font-mono text-xs text-text-muted animate-pulse">
             Analyzing against trust patterns...
@@ -407,8 +382,8 @@ function Analyzer({ input, setInput }) {
         )}
 
         {error && !isAnalyzing && (
-          <div className="bg-danger/10 border border-danger/20 rounded-sm p-4">
-            <p className="font-mono text-xs text-danger">{error}</p>
+          <div className="mt-4 border border-danger/20 bg-danger/[0.04] rounded-sm p-4">
+            <p className="font-mono text-xs text-danger">⚠ {error}</p>
           </div>
         )}
 
