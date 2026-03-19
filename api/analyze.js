@@ -49,7 +49,8 @@ export default async function handler(req, res) {
     if (!response.ok) {
       const errorText = await response.text()
       console.error('Groq error:', response.status, errorText)
-      return res.status(502).json({ error: 'Analysis service unavailable' })
+      // TEMP diagnostic
+      return res.status(502).json({ error: 'Analysis service unavailable', _debug: { status: response.status, body: errorText } })
     }
 
     const data = await response.json()
