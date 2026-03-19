@@ -120,7 +120,7 @@ All contributors will be credited.
 
 ## Built by
 
-Adam — AI-Native Senior Product Designer
+Adam Goddenyu — AI-Native Senior Product Designer
 [adamgoddenyu.com](https://adamgoddenyu.com)
 
 Built with Claude Code + Cursor

@@ -599,7 +599,7 @@ export default function TrustLens() {
 
         {/* ── FOOTER ───────────────────────────────────── */}
         <footer className="border-t border-white/[0.06] mt-16 py-6 flex justify-between items-center">
-          <span className="font-mono text-xs text-text-dim">Built by Adam — AI-Native Senior Product Designer</span>
+          <span className="font-mono text-xs text-text-dim">Built by Adam Goddenyu — AI-Native Senior Product Designer</span>
           <span className="font-mono text-xs text-text-dim">Built with Claude Code + Cursor</span>
         </footer>
 
