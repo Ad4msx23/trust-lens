@@ -1,22 +1,18 @@
-export default async function handler(req, res) {
+const handler = async (req, res) => {
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Method not allowed' })
   }
 
   const { input } = req.body
 
-  if (!input || typeof input !== 'string') {
-    return res.status(400).json({ error: 'Input is required' })
-  }
-
-  const sanitizedInput = input.trim().slice(0, 1000)
-
-  if (sanitizedInput.length < 10) {
+  if (!input || typeof input !== 'string' ||
+      input.trim().length < 10) {
     return res.status(400).json({
-      error: 'Input too short — describe your UI in at least 10 characters',
+      error: 'Please describe your UI in more detail',
     })
   }
 
+  const sanitizedInput = input.trim().slice(0, 1000)
   const apiKey = process.env.ANTHROPIC_API_KEY
 
   if (!apiKey) {
@@ -34,40 +30,35 @@ export default async function handler(req, res) {
       body: JSON.stringify({
         model: 'claude-sonnet-4-20250514',
         max_tokens: 1000,
-        system: `You are a UI/UX analyst specializing in AI trust design for security operations interfaces. You evaluate design decisions against six trust patterns: Confidence Calibration, Reasoning Visibility, Human Control, Auditability, Graceful Failure, and Alert Fatigue Reduction. Respond only with valid JSON. No markdown. No backticks. No preamble. Just the JSON object.`,
+        system: `You are a UI/UX analyst specializing in AI trust design for security operations interfaces. Evaluate design decisions against six trust patterns: Confidence Calibration, Reasoning Visibility, Human Control, Auditability, Graceful Failure, Alert Fatigue Reduction. Respond ONLY with valid JSON. No markdown. No backticks. No explanation. Just the JSON object.`,
         messages: [
           {
             role: 'user',
-            content: `Evaluate this design decision: "${sanitizedInput}"\n\nRespond with this exact JSON structure:\n{\n  "pattern": "which trust pattern applies most",\n  "verdict": "DO or DONT",\n  "analysis": "2-3 sentences explaining why",\n  "recommendation": "one concrete improvement"\n}`,
+            content: `Evaluate this design decision: "${sanitizedInput}"\n\nRespond with exactly this JSON structure:\n{\n  "pattern": "name of the most relevant trust pattern",\n  "verdict": "DO",\n  "analysis": "2-3 sentences explaining the issue",\n  "recommendation": "one specific concrete improvement"\n}`,
           },
         ],
       }),
     })
 
     if (!response.ok) {
-      const error = await response.text()
-      console.error('Anthropic API error:', error)
+      const errorText = await response.text()
+      console.error('Anthropic error:', response.status, errorText)
       return res.status(502).json({ error: 'Analysis service unavailable' })
     }
 
     const data = await response.json()
     const text = data.content[0].text
-
     const clean = text
       .replace(/```json/g, '')
       .replace(/```/g, '')
       .trim()
 
     const result = JSON.parse(clean)
-
-    res.setHeader(
-      'Access-Control-Allow-Origin',
-      process.env.NODE_ENV === 'development' ? 'http://localhost:4000' : '*'
-    )
-
     return res.status(200).json(result)
-  } catch (error) {
-    console.error('Handler error:', error)
+  } catch (err) {
+    console.error('Handler error:', err.message)
     return res.status(500).json({ error: 'Something went wrong — please try again' })
   }
 }
+
+module.exports = handler
