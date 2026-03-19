@@ -29,7 +29,7 @@ export default async function handler(req, res) {
           Authorization: `Bearer ${apiKey}`,
         },
         body: JSON.stringify({
-          model: 'llama3-70b-8192',
+          model: 'llama-3.3-70b-versatile',
           temperature: 0.3,
           max_tokens: 500,
           messages: [
@@ -49,8 +49,7 @@ export default async function handler(req, res) {
     if (!response.ok) {
       const errorText = await response.text()
       console.error('Groq error:', response.status, errorText)
-      // TEMP diagnostic
-      return res.status(502).json({ error: 'Analysis service unavailable', _debug: { status: response.status, body: errorText } })
+      return res.status(502).json({ error: 'Analysis service unavailable' })
     }
 
     const data = await response.json()
