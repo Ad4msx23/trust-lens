@@ -43,7 +43,11 @@ export default async function handler(req, res) {
     if (!response.ok) {
       const errorText = await response.text()
       console.error('Anthropic error:', response.status, errorText)
-      return res.status(502).json({ error: 'Analysis service unavailable' })
+      // TEMP: expose raw error for diagnosis — remove before final deploy
+      return res.status(502).json({
+        error: 'Analysis service unavailable',
+        _debug: { status: response.status, body: errorText },
+      })
     }
 
     const data = await response.json()
