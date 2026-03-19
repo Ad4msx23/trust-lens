@@ -11,17 +11,17 @@
 Most AI products are designed for the happy path.
 Trust Lens is built around what happens when the AI is wrong, uncertain, or needs a human to intervene.
 
-Six evidence-based design patterns, grounded in Google PAIR, Microsoft HAX, IBM Carbon for AI, and the WEF Trust Stack — with a live AI analyzer that audits your design decisions against them.
+Six evidence-based design patterns, grounded in Google PAIR, Microsoft HAX, IBM Carbon for AI, and the WEF Trust Stack, with a live AI analyzer that audits your design decisions against them.
 
 ---
 
 ## Features
 
-- **6 Trust Patterns** — Confidence calibration, Chain of thought visibility, Human-in-the-loop override, Auditability, Graceful failure, Alert fatigue reduction
-- **Visual DO/DON'T examples** — Each pattern includes illustrated mockups, not just text
-- **Live Trust Analyzer** — Describe your UI, get an instant audit against all six patterns powered by Llama 3 via Groq
-- **Framework references** — Every pattern links back to Google PAIR, Microsoft HAX, IBM Carbon, or WEF Trust Stack
-- **Built for designers** — IBM Carbon dark aesthetic, no engineering jargon
+- **6 Trust Patterns:** Confidence calibration, Chain of thought visibility, Human-in-the-loop override, Auditability, Graceful failure, Alert fatigue reduction
+- **Visual DO/DON'T examples:** Each pattern includes illustrated mockups, not just text
+- **Live Trust Analyzer:** Describe your UI, get an instant audit against all six patterns powered by Llama 3 via Groq
+- **Framework references:** Every pattern links back to Google PAIR, Microsoft HAX, IBM Carbon, or WEF Trust Stack
+- **Built for designers:** IBM Carbon dark aesthetic, no engineering jargon
 
 ---
 
@@ -38,7 +38,7 @@ Six evidence-based design patterns, grounded in Google PAIR, Microsoft HAX, IBM 
 ### Prerequisites
 
 - Node.js 18+
-- A Groq API key — free at [console.groq.com](https://console.groq.com)
+- A Groq API key, free at [console.groq.com](https://console.groq.com)
 
 ### Install
 
@@ -88,7 +88,7 @@ Open [http://localhost:5173](http://localhost:5173)
 - React + Vite
 - Tailwind CSS v3
 - IBM Plex Sans + IBM Plex Mono
-- Anthropic Claude API (`claude-sonnet-4-20250514`)
+- Groq API (llama-3.3-70b-versatile)
 
 ---
 
@@ -120,7 +120,7 @@ All contributors will be credited.
 
 ## Built by
 
-Adam Goddenyu — AI-Native Senior Product Designer
+Adam Goddenyu, AI-Native Senior Product Designer
 [adamgoddenyu.com](https://adamgoddenyu.com)
 
 Built with Claude Code + Cursor
@@ -129,4 +129,4 @@ Built with Claude Code + Cursor
 
 ## License
 
-MIT — use it, fork it, build on it.
+MIT: use it, fork it, build on it.

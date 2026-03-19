@@ -16,8 +16,8 @@ export default {
         accent:         '#68FF7D',
         danger:         '#FF6B6B',
         'text-primary': '#f4f4f4',
-        'text-muted':   '#6f6f6f',
-        'text-dim':     '#3f3f3f',
+        'text-muted':   '#949494',
+        'text-dim':     '#757575',
       },
       keyframes: {
         fadeUp: {

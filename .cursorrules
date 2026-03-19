@@ -1,4 +1,4 @@
-# Trust Lens — Cursor Rules
+# Trust Lens: Cursor Rules
 
 ## Stack
 - React + Vite
@@ -10,19 +10,29 @@
 ## Code style
 - Functional React components only, no classes
 - useState and useEffect hooks only
-- Tailwind classes only — zero inline styles except runtime dynamic values (animationDelay etc)
+- Tailwind classes only, zero inline styles except runtime dynamic values (animationDelay etc)
 - CommonJS in /api/ files (module.exports, not export default)
-- No TypeScript — plain JavaScript
+- No TypeScript, plain JavaScript
 - Semantic HTML with aria attributes on interactive elements
 
-## Colors (never hardcode hex — use Tailwind tokens)
+## Colors (never hardcode hex, use Tailwind tokens)
 - Background: bg-base (#0f0f0f)
 - Cards: bg-surface (#1a1a1a)
 - Accent: text-accent / border-accent (#68FF7D)
 - Danger: text-danger (#FF6B6B)
 - Primary text: text-text-primary (#f4f4f4)
-- Muted text: text-text-muted (#6f6f6f)
-- Dim text: text-text-dim (#3f3f3f)
+- Muted text: text-text-muted (#949494)
+- Dim text: text-text-dim (#757575)
+
+## Accessibility
+- Minimum WCAG AA contrast ratios on all text (4.5:1 for body, 3:1 for UI components)
+- text-dim minimum: #757575 on dark backgrounds (4.6:1 on #0f0f0f)
+- text-muted minimum: #949494 on dark backgrounds (5.8:1 on #0f0f0f)
+
+## Writing style rules
+- Never use em dashes in any output
+- Use commas or rewrite sentences instead
+- No spaced em dashes ( -- ) either
 
 ## Security rules
 - Never put API keys in frontend code
@@ -31,7 +41,7 @@
 - Never log sensitive data
 
 ## File structure
-/api/          — Vercel serverless functions
-/src/          — React components
-/public/       — Static assets
-App.jsx        — Main component (single file for now)
+/api/          Vercel serverless functions
+/src/          React components
+/public/       Static assets
+App.jsx        Main component (single file for now)

@@ -27,7 +27,7 @@ const PATTERNS = [
     title: 'Human-in-the-loop override',
     principle: "The AI will be wrong. 'Correct the AI' is a first-class feature, not an edge case.",
     do: "Place a visible 'Override' button on every AI decision, with a simple correction flow",
-    dont: "Hide correction behind Settings > Advanced > Feedback — analysts won't find it under pressure",
+    dont: "Hide correction behind Settings > Advanced > Feedback, analysts won't find it under pressure",
     frameworks: ['Google PAIR', 'Microsoft HAX'],
   },
   {
@@ -35,7 +35,7 @@ const PATTERNS = [
     category: 'Evidence Trail',
     title: 'Auditability',
     principle: 'Every AI decision must link to the raw data that caused it. One click. No new tab.',
-    do: 'Inline expandable evidence panel — analyst sees the log line that triggered the alert',
+    do: 'Inline expandable evidence panel: analyst sees the log line that triggered the alert',
     dont: "Link to a separate audit log page that breaks the analyst's flow and context",
     frameworks: ['IBM Carbon AI', 'WEF Trust Stack'],
   },
@@ -54,7 +54,7 @@ const PATTERNS = [
     title: 'Alert fatigue reduction',
     principle: 'Analysts see hundreds of alerts daily. Most are false positives. Real threats must break the visual pattern.',
     do: 'Use strong visual disruption (color, size, motion) only for confirmed high-severity threats',
-    dont: 'Style all alerts the same — analysts will start ignoring everything including real threats',
+    dont: 'Style all alerts the same; analysts will start ignoring everything including real threats',
     frameworks: ['IBM Carbon AI', 'WEF Trust Stack'],
   },
 ]
@@ -63,25 +63,25 @@ const FRAMEWORKS = [
   {
     name: 'Google PAIR',
     org: 'Google',
-    covers: 'People + AI Research Guidebook — UX patterns for human-AI collaboration',
+    covers: 'People + AI Research Guidebook, UX patterns for human-AI collaboration',
     url: 'https://pair.withgoogle.com/guidebook',
   },
   {
     name: 'Microsoft HAX',
     org: 'Microsoft',
-    covers: 'Human-AI Experience guidelines — 18 design principles for AI products',
+    covers: 'Human-AI Experience guidelines, 18 design principles for AI products',
     url: 'https://www.microsoft.com/en-us/haxtoolkit',
   },
   {
     name: 'IBM Carbon AI',
     org: 'IBM',
-    covers: 'Enterprise AI design system — patterns for transparency and trust at scale',
+    covers: 'Enterprise AI design system, patterns for transparency and trust at scale',
     url: 'https://carbondesignsystem.com',
   },
   {
     name: 'WEF Trust Stack',
     org: 'World Economic Forum',
-    covers: 'AI governance principles — accountability and explainability at org level',
+    covers: 'AI governance principles, accountability and explainability at org level',
     url: 'https://www.weforum.org/reports/ai-governance',
   },
 ]
@@ -100,7 +100,7 @@ const DoVisual = ({ id }) => {
     <svg viewBox="0 0 200 80" className="w-full" fill="none" aria-hidden="true">
       <rect x="8" y="8" width="184" height="64" rx="3" fill="#222" stroke="rgba(255,255,255,0.08)" strokeWidth="1"/>
       <rect x="18" y="18" width="108" height="18" rx="2" fill="rgba(255,180,0,0.12)" stroke="rgba(255,180,0,0.4)" strokeWidth="1"/>
-      <text x="72" y="30.5" textAnchor="middle" fontSize="9" fill="#FFB400" fontFamily="monospace">Low confidence — 42%</text>
+      <text x="72" y="30.5" textAnchor="middle" fontSize="9" fill="#FFB400" fontFamily="monospace">Low confidence: 42%</text>
       <rect x="18" y="44" width="88" height="16" rx="2" fill="rgba(255,255,255,0.05)" stroke="rgba(255,255,255,0.14)" strokeWidth="1"/>
       <text x="62" y="55.5" textAnchor="middle" fontSize="8.5" fill="#6f6f6f" fontFamily="monospace">Review manually</text>
     </svg>
@@ -240,7 +240,7 @@ function PatternCard({ pattern, isOpen, onToggle, index }) {
       {/* Header row */}
       <div className="flex justify-between items-start px-6 py-5">
         <div className="flex-1 min-w-0 pr-4">
-          <div className="font-mono text-[10px] tracking-[0.15em] uppercase text-text-dim mb-1.5">
+          <div className="font-mono text-[10px] tracking-[0.15em] uppercase text-text-muted mb-1.5">
             {pattern.category}
           </div>
           <div className="text-sm font-medium text-text-primary mb-1">
@@ -251,7 +251,7 @@ function PatternCard({ pattern, isOpen, onToggle, index }) {
           </div>
         </div>
         <div className="flex items-center shrink-0 mt-1 gap-2">
-          <span className="font-mono text-[10px] text-text-dim">
+          <span className="font-mono text-[10px] text-text-muted">
             {String(index + 1).padStart(2, '0')}
           </span>
           <span className={['text-accent text-sm transition-transform duration-150', isOpen ? 'rotate-180' : ''].join(' ')}>
@@ -346,7 +346,7 @@ function Analyzer({ input, setInput }) {
         onChange={(e) => setInput(e.target.value)}
         onKeyDown={handleKeyDown}
         placeholder="e.g. 'I'm showing AI confidence as a percentage in the alert card header'"
-        className="w-full bg-surface border border-white/[0.06] rounded-sm p-4 text-sm text-text-primary placeholder-text-dim font-sans resize-none h-32 focus:outline-none focus:border-accent/40 transition-colors duration-150 leading-relaxed"
+        className="w-full bg-surface border border-white/[0.06] rounded-sm p-4 text-sm text-text-primary placeholder-[#757575] font-sans resize-none h-32 focus:outline-none focus:border-accent/40 transition-colors duration-150 leading-relaxed"
       />
 
       <div className="flex items-center gap-4 mt-3">
@@ -462,7 +462,7 @@ export default function TrustLens() {
               Design for AI trust in defensive cybersecurity
             </h1>
             <p className="text-sm text-text-muted font-light mt-2 max-w-lg leading-relaxed">
-              Six evidence-based patterns for building AI interfaces analysts can trust — with a live analyzer to audit your design decisions.
+              Six evidence-based patterns for building AI interfaces analysts can trust, with a live analyzer to audit your design decisions.
             </p>
           </div>
           <div className="font-mono text-[10px] text-text-dim text-right hidden md:block mt-1 leading-relaxed">
@@ -475,7 +475,7 @@ export default function TrustLens() {
       {/* ── MAIN SPLIT PANEL ───────────────────────────────────── */}
       <main className="flex flex-col lg:flex-row min-h-[calc(100vh-160px)]">
 
-        {/* LEFT — Trust Patterns */}
+        {/* LEFT: Trust Patterns */}
         <div className="lg:w-[55%] border-r border-white/[0.06] px-5 md:px-8 xl:px-12 py-8 overflow-y-auto">
           <div className="flex items-center justify-between mb-6">
             <div>
@@ -505,7 +505,7 @@ export default function TrustLens() {
           ))}
         </div>
 
-        {/* RIGHT — Trust Analyzer */}
+        {/* RIGHT: Trust Analyzer */}
         <div className="lg:w-[45%] px-5 md:px-8 xl:px-12 py-8 lg:sticky lg:top-0 lg:h-screen lg:overflow-y-auto">
           <div className="mb-6">
             <div className="font-mono text-[10px] tracking-[0.15em] uppercase text-text-dim mb-1">
@@ -552,7 +552,7 @@ export default function TrustLens() {
               <div className="text-sm font-medium text-text-primary mb-2 group-hover:text-accent transition-colors">
                 {fw.name}
               </div>
-              <div className="text-xs text-text-muted leading-relaxed mb-3">
+              <div className="text-xs text-[#b0b0b0] leading-relaxed mb-3">
                 {fw.covers}
               </div>
               <div className="font-mono text-[11px] text-accent">
@@ -565,8 +565,8 @@ export default function TrustLens() {
 
       {/* ── FOOTER ─────────────────────────────────────────────── */}
       <footer className="border-t border-white/[0.06] px-5 md:px-8 xl:px-16 py-6 flex justify-between items-center">
-        <span className="font-mono text-xs text-text-dim">Built by Adam Goddenyu — AI-Native Senior Product Designer</span>
-        <span className="font-mono text-xs text-text-dim">Built with Claude Code + Cursor</span>
+        <span className="font-mono text-xs text-text-muted">Built by Adam Goddenyu, AI-Native Senior Product Designer</span>
+        <span className="font-mono text-xs text-text-muted">Built with Claude Code + Cursor</span>
       </footer>
 
     </div>
