@@ -13,41 +13,48 @@ export default async function handler(req, res) {
   }
 
   const sanitizedInput = input.trim().slice(0, 1000)
-  const apiKey = process.env.ANTHROPIC_API_KEY
+  const apiKey = process.env.GROQ_API_KEY
 
   if (!apiKey) {
     return res.status(500).json({ error: 'API not configured' })
   }
 
   try {
-    const response = await fetch('https://api.anthropic.com/v1/messages', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'x-api-key': apiKey,
-        'anthropic-version': '2023-06-01',
-      },
-      body: JSON.stringify({
-        model: 'claude-sonnet-4-6',
-        max_tokens: 1000,
-        system: `You are a UI/UX analyst specializing in AI trust design for security operations interfaces. Evaluate design decisions against six trust patterns: Confidence Calibration, Reasoning Visibility, Human Control, Auditability, Graceful Failure, Alert Fatigue Reduction. Respond ONLY with valid JSON. No markdown. No backticks. No explanation. Just the JSON object.`,
-        messages: [
-          {
-            role: 'user',
-            content: `Evaluate this design decision: "${sanitizedInput}"\n\nRespond with exactly this JSON structure:\n{\n  "pattern": "name of the most relevant trust pattern",\n  "verdict": "DO",\n  "analysis": "2-3 sentences explaining the issue",\n  "recommendation": "one specific concrete improvement"\n}`,
-          },
-        ],
-      }),
-    })
+    const response = await fetch(
+      'https://api.groq.com/openai/v1/chat/completions',
+      {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${apiKey}`,
+        },
+        body: JSON.stringify({
+          model: 'llama3-70b-8192',
+          temperature: 0.3,
+          max_tokens: 500,
+          messages: [
+            {
+              role: 'system',
+              content: `You are a UI/UX analyst specializing in AI trust design for security operations interfaces. Evaluate design decisions against six trust patterns: Confidence Calibration, Reasoning Visibility, Human Control, Auditability, Graceful Failure, Alert Fatigue Reduction. You MUST respond with ONLY a valid JSON object. No markdown. No backticks. No explanation before or after. Just the raw JSON object.`,
+            },
+            {
+              role: 'user',
+              content: `Evaluate this UI design decision: "${sanitizedInput}"\n\nRespond with exactly this JSON structure and nothing else:\n{\n  "pattern": "name of the most relevant trust pattern",\n  "verdict": "DO or DONT",\n  "analysis": "2-3 sentences explaining why this is good or bad practice",\n  "recommendation": "one specific concrete improvement to make"\n}`,
+            },
+          ],
+        }),
+      }
+    )
 
     if (!response.ok) {
       const errorText = await response.text()
-      console.error('Anthropic error:', response.status, errorText)
+      console.error('Groq error:', response.status, errorText)
       return res.status(502).json({ error: 'Analysis service unavailable' })
     }
 
     const data = await response.json()
-    const text = data.content[0].text
+    const text = data.choices[0].message.content
+
     const clean = text
       .replace(/```json/g, '')
       .replace(/```/g, '')

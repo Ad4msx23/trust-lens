@@ -19,7 +19,7 @@ Six evidence-based design patterns, grounded in Google PAIR, Microsoft HAX, IBM 
 
 - **6 Trust Patterns** — Confidence calibration, Chain of thought visibility, Human-in-the-loop override, Auditability, Graceful failure, Alert fatigue reduction
 - **Visual DO/DON'T examples** — Each pattern includes illustrated mockups, not just text
-- **Live Trust Analyzer** — Describe your UI, get an instant audit against all six patterns powered by Claude AI
+- **Live Trust Analyzer** — Describe your UI, get an instant audit against all six patterns powered by Llama 3 via Groq
 - **Framework references** — Every pattern links back to Google PAIR, Microsoft HAX, IBM Carbon, or WEF Trust Stack
 - **Built for designers** — IBM Carbon dark aesthetic, no engineering jargon
 
@@ -38,7 +38,7 @@ Six evidence-based design patterns, grounded in Google PAIR, Microsoft HAX, IBM 
 ### Prerequisites
 
 - Node.js 18+
-- An Anthropic API key ([get one at console.anthropic.com](https://console.anthropic.com))
+- A Groq API key — free at [console.groq.com](https://console.groq.com)
 
 ### Install
 
@@ -54,10 +54,10 @@ npm install
 cp .env.example .env
 ```
 
-Open `.env` and add your Anthropic API key:
+Open `.env` and add your Groq API key:
 
 ```
-VITE_ANTHROPIC_API_KEY=your_key_here
+GROQ_API_KEY=your_key_here
 ```
 
 ### Run
