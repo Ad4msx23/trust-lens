@@ -1,4 +1,5 @@
-import { useState } from 'react'
+import { useState, useEffect, useRef } from 'react'
+import { gsap } from 'gsap'
 
 // ── Data ─────────────────────────────────────────────────────────────────────
 
@@ -76,7 +77,7 @@ const FRAMEWORKS = [
     name: 'WEF Trust Stack',
     org: 'World Economic Forum',
     covers: 'AI governance principles, accountability and explainability at org level',
-    url: 'https://www.weforum.org/reports/ai-governance',
+    url: 'https://www.weforum.org/publications/ai-governance-alliance-briefing-paper-series/',
   },
 ]
 
@@ -216,11 +217,40 @@ const DontVisual = ({ id }) => {
 
 // ── Pattern card ──────────────────────────────────────────────────────────────
 
-function PatternCard({ pattern, isOpen, onToggle, index }) {
+function PatternCard({ pattern, isOpen, onToggle }) {
+  const expandRef    = useRef(null)
+  const firstRender  = useRef(true)
+
+  // Expand / collapse animation
+  useEffect(() => {
+    const el = expandRef.current
+    if (!el) return
+
+    if (firstRender.current) {
+      firstRender.current = false
+      gsap.set(el, { height: 0, opacity: 0, overflow: 'hidden' })
+      return
+    }
+
+    if (isOpen) {
+      gsap.fromTo(el,
+        { opacity: 0, height: 0, y: -4 },
+        { opacity: 1, height: 'auto', y: 0, duration: 0.35, ease: 'power2.out', overflow: 'hidden' }
+      )
+    } else {
+      gsap.to(el, {
+        opacity: 0, height: 0, y: -4,
+        duration: 0.25, ease: 'power2.in',
+      })
+    }
+
+    return () => gsap.killTweensOf(el)
+  }, [isOpen])
+
   return (
     <div
-      className="bg-surface border border-white/[0.06] rounded-sm mb-2 px-5 py-4 cursor-pointer hover:border-accent/20 transition-colors duration-150 opacity-0 animate-fade-up"
-      style={{ animationDelay: `${index * 60}ms`, animationFillMode: 'forwards' }}
+      data-card
+      className="bg-surface border border-white/[0.06] rounded-sm mb-2 px-5 py-4 cursor-pointer hover:border-accent/20 transition-colors duration-200"
       onClick={onToggle}
       role="button"
       aria-expanded={isOpen}
@@ -235,13 +265,13 @@ function PatternCard({ pattern, isOpen, onToggle, index }) {
             {pattern.principle}
           </div>
         </div>
-        <div className={['text-accent ml-4 shrink-0 transition-transform duration-150 text-xs', isOpen ? 'rotate-180' : ''].join(' ')}>
+        <div className={['text-accent ml-4 shrink-0 transition-transform duration-200 text-xs', isOpen ? 'rotate-180' : ''].join(' ')}>
           ▾
         </div>
       </div>
 
-      {/* Expanded content */}
-      {isOpen && (
+      {/* Expanded content — always rendered, GSAP controls height/opacity */}
+      <div ref={expandRef} style={{ height: 0, overflow: 'hidden', opacity: 0 }}>
         <div className="mt-3 pt-3 border-t border-white/[0.06]">
           <div className="grid grid-cols-2 gap-2 mb-4">
 
@@ -279,7 +309,7 @@ function PatternCard({ pattern, isOpen, onToggle, index }) {
             ))}
           </div>
         </div>
-      )}
+      </div>
     </div>
   )
 }
@@ -290,6 +320,42 @@ function Analyzer({ input, setInput }) {
   const [isAnalyzing, setIsAnalyzing] = useState(false)
   const [result, setResult]           = useState(null)
   const [error, setError]             = useState(null)
+  const resultRef        = useRef(null)
+  const analyzeButtonRef = useRef(null)
+
+  // Cleanup on unmount
+  useEffect(() => {
+    return () => {
+      if (resultRef.current)        gsap.killTweensOf(resultRef.current)
+      if (analyzeButtonRef.current) gsap.killTweensOf(analyzeButtonRef.current)
+    }
+  }, [])
+
+  // Animate result card entrance
+  useEffect(() => {
+    if (!result || !resultRef.current) return
+    gsap.fromTo(resultRef.current,
+      { opacity: 0, y: 16 },
+      { opacity: 1, y: 0, duration: 0.45, ease: 'power2.out' }
+    )
+  }, [result])
+
+  // Animate button loading pulse
+  useEffect(() => {
+    if (!analyzeButtonRef.current) return
+    if (isAnalyzing) {
+      gsap.to(analyzeButtonRef.current, {
+        opacity: 0.6,
+        repeat: -1,
+        yoyo: true,
+        duration: 0.8,
+        ease: 'power1.inOut',
+      })
+    } else {
+      gsap.killTweensOf(analyzeButtonRef.current)
+      gsap.to(analyzeButtonRef.current, { opacity: 1, duration: 0.2 })
+    }
+  }, [isAnalyzing])
 
   const handleAnalyze = async () => {
     if (!input.trim() || isAnalyzing) return
@@ -336,9 +402,10 @@ function Analyzer({ input, setInput }) {
 
       <div className="flex items-center gap-4 mt-3">
         <button
+          ref={analyzeButtonRef}
           onClick={handleAnalyze}
           disabled={isAnalyzing || !input.trim()}
-          className="px-5 py-2.5 bg-accent text-base font-mono text-xs tracking-wider uppercase rounded-sm hover:opacity-90 transition-opacity disabled:opacity-40 disabled:cursor-not-allowed"
+          className="px-5 py-2.5 bg-accent text-base font-mono text-xs tracking-wider uppercase rounded-sm hover:opacity-90 disabled:cursor-not-allowed"
         >
           {isAnalyzing ? 'Analyzing...' : 'Analyze →'}
         </button>
@@ -356,7 +423,7 @@ function Analyzer({ input, setInput }) {
       {/* Output area */}
       <div className="mt-6">
         {isAnalyzing && (
-          <p className="font-mono text-xs text-text-muted animate-pulse">
+          <p className="font-mono text-xs text-text-muted">
             Analyzing against trust patterns...
           </p>
         )}
@@ -388,7 +455,7 @@ function Analyzer({ input, setInput }) {
         )}
 
         {result && !isAnalyzing && (
-          <div className="bg-surface border border-white/[0.06] rounded-sm p-5">
+          <div ref={resultRef} className="bg-surface border border-white/[0.06] rounded-sm p-5">
             <div className="font-mono text-[10px] tracking-wider uppercase text-accent mb-2">
               Pattern matched
             </div>
@@ -412,6 +479,18 @@ function Analyzer({ input, setInput }) {
 export default function TrustLens() {
   const [openPatterns,  setOpenPatterns]  = useState(new Set())
   const [analyzerInput, setAnalyzerInput] = useState('')
+  const cardsRef = useRef(null)
+
+  // Stagger cards in on mount
+  useEffect(() => {
+    if (!cardsRef.current) return
+    const cards = cardsRef.current.querySelectorAll('[data-card]')
+    gsap.fromTo(cards,
+      { opacity: 0, y: 12 },
+      { opacity: 1, y: 0, duration: 0.4, ease: 'power2.out', stagger: 0.06, delay: 0.1 }
+    )
+    return () => gsap.killTweensOf(cards)
+  }, [])
 
   const allExpanded = openPatterns.size === PATTERNS.length
 
@@ -478,15 +557,17 @@ export default function TrustLens() {
             </button>
           </div>
 
-          {PATTERNS.map((pattern, index) => (
-            <PatternCard
-              key={pattern.id}
-              pattern={pattern}
-              index={index}
-              isOpen={openPatterns.has(pattern.id)}
-              onToggle={() => togglePattern(pattern.id)}
-            />
-          ))}
+          <div ref={cardsRef}>
+            {PATTERNS.map((pattern, index) => (
+              <PatternCard
+                key={pattern.id}
+                pattern={pattern}
+                index={index}
+                isOpen={openPatterns.has(pattern.id)}
+                onToggle={() => togglePattern(pattern.id)}
+              />
+            ))}
+          </div>
         </div>
 
         {/* RIGHT: Trust Analyzer */}
