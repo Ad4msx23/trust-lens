@@ -28,7 +28,7 @@ export default async function handler(req, res) {
         'anthropic-version': '2023-06-01',
       },
       body: JSON.stringify({
-        model: 'claude-sonnet-4-20250514',
+        model: 'claude-sonnet-4-6',
         max_tokens: 1000,
         system: `You are a UI/UX analyst specializing in AI trust design for security operations interfaces. Evaluate design decisions against six trust patterns: Confidence Calibration, Reasoning Visibility, Human Control, Auditability, Graceful Failure, Alert Fatigue Reduction. Respond ONLY with valid JSON. No markdown. No backticks. No explanation. Just the JSON object.`,
         messages: [
