@@ -1,4 +1,4 @@
-import { useState, useRef, useCallback } from 'react'
+import { useState } from 'react'
 
 // ── Data ─────────────────────────────────────────────────────────────────────
 
@@ -240,10 +240,10 @@ function PatternCard({ pattern, isOpen, onToggle, index }) {
       {/* Header row */}
       <div className="flex justify-between items-start px-6 py-5">
         <div className="flex-1 min-w-0 pr-4">
-          <div className="font-mono text-[10px] tracking-[0.15em] uppercase text-text-muted mb-1.5">
+          <div className="font-mono text-[10px] tracking-[0.15em] uppercase text-text-dim mb-1.5">
             {pattern.category}
           </div>
-          <div className="text-base font-medium text-text-primary mb-1">
+          <div className="text-sm font-medium text-text-primary mb-1">
             {pattern.title}
           </div>
           <div className="text-sm text-text-muted leading-relaxed">
@@ -263,13 +263,12 @@ function PatternCard({ pattern, isOpen, onToggle, index }) {
       {/* Expanded content */}
       {isOpen && (
         <div className="px-6 pb-6 border-t border-white/[0.06]">
-          {/* Side-by-side DO/DON'T panels */}
           <div className="mt-4 grid grid-cols-2 gap-3">
             {/* DO panel */}
             <div className="bg-accent/[0.04] border border-accent/20 rounded-sm p-4">
               <div className="flex items-center gap-2 mb-3">
                 <span className="text-accent text-xs">✓</span>
-                <span className="font-mono text-[10px] tracking-widest uppercase text-accent">Do</span>
+                <span className="font-mono text-[10px] tracking-widest uppercase text-accent font-medium">Do</span>
               </div>
               <DoVisual id={pattern.id} />
               <p className="text-xs text-text-muted leading-relaxed mt-3">{pattern.do}</p>
@@ -279,7 +278,7 @@ function PatternCard({ pattern, isOpen, onToggle, index }) {
             <div className="bg-danger/[0.04] border border-danger/20 rounded-sm p-4">
               <div className="flex items-center gap-2 mb-3">
                 <span className="text-danger text-xs">✗</span>
-                <span className="font-mono text-[10px] tracking-widest uppercase text-danger">Don't</span>
+                <span className="font-mono text-[10px] tracking-widest uppercase text-danger font-medium">Don't</span>
               </div>
               <DontVisual id={pattern.id} />
               <p className="text-xs text-text-muted leading-relaxed mt-3">{pattern.dont}</p>
@@ -341,11 +340,7 @@ function Analyzer({ input, setInput }) {
   const verdictIsPositive = result?.verdict === 'DO'
 
   return (
-    <div className="max-w-[640px]">
-      <p className="font-mono text-xs tracking-widest uppercase text-text-muted mb-2">
-        Describe your UI or paste a design decision
-      </p>
-
+    <div>
       <textarea
         value={input}
         onChange={(e) => setInput(e.target.value)}
@@ -370,11 +365,11 @@ function Analyzer({ input, setInput }) {
             Clear
           </button>
         )}
-        <span className="font-mono text-[11px] text-text-dim">Cmd+Enter to submit</span>
+        <span className="font-mono text-[11px] text-text-dim">Cmd+Enter</span>
       </div>
 
       {/* Output area */}
-      <div className="mt-8">
+      <div className="mt-6">
         {isAnalyzing && (
           <p className="font-mono text-xs text-text-muted animate-pulse">
             Analyzing against trust patterns...
@@ -389,8 +384,8 @@ function Analyzer({ input, setInput }) {
 
         {/* Example prompts empty state */}
         {!result && !isAnalyzing && !error && (
-          <div className="border border-white/[0.06] rounded-sm p-6 bg-surface">
-            <p className="font-mono text-[10px] tracking-widest uppercase text-text-dim mb-4">
+          <div className="border border-white/[0.06] rounded-sm p-5 bg-surface">
+            <p className="font-mono text-[10px] tracking-widest uppercase text-text-dim mb-3">
               Try these examples
             </p>
             <div className="space-y-2">
@@ -409,7 +404,7 @@ function Analyzer({ input, setInput }) {
         )}
 
         {result && !isAnalyzing && (
-          <div className="bg-surface border border-white/[0.06] rounded-sm p-6">
+          <div className="bg-surface border border-white/[0.06] rounded-sm p-5">
             <div className="font-mono text-[10px] tracking-wider uppercase text-accent mb-2">
               Pattern matched
             </div>
@@ -428,35 +423,9 @@ function Analyzer({ input, setInput }) {
   )
 }
 
-// ── Frameworks tab ────────────────────────────────────────────────────────────
-
-function FrameworksTab() {
-  return (
-    <div>
-      <p className="text-sm text-text-muted mb-8">The four frameworks this tool is grounded in.</p>
-      <div className="grid grid-cols-[1fr_120px_2fr_80px] gap-6 mb-2">
-        {['Framework', 'Org', 'What it covers', ''].map((h) => (
-          <span key={h} className="font-mono text-[10px] tracking-widest uppercase text-text-dim">{h}</span>
-        ))}
-      </div>
-      {FRAMEWORKS.map((fw, i) => (
-        <div key={i} className="border-b border-white/[0.06] py-5 grid grid-cols-[1fr_120px_2fr_80px] gap-6 items-start">
-          <div className="text-sm font-medium text-text-primary">{fw.name}</div>
-          <div className="font-mono text-xs text-text-muted">{fw.org}</div>
-          <div className="text-sm text-text-muted leading-relaxed">{fw.covers}</div>
-          <a href={fw.url} target="_blank" rel="noopener noreferrer" className="font-mono text-xs text-accent hover:opacity-70 transition-opacity text-right">
-            View →
-          </a>
-        </div>
-      ))}
-    </div>
-  )
-}
-
 // ── Root ──────────────────────────────────────────────────────────────────────
 
 export default function TrustLens() {
-  const [activeTab,     setActiveTab]     = useState('patterns')
   const [openPatterns,  setOpenPatterns]  = useState(new Set())
   const [analyzerInput, setAnalyzerInput] = useState('')
 
@@ -479,131 +448,127 @@ export default function TrustLens() {
   }
 
   return (
-    <div
-      className="min-h-screen text-text-primary font-sans relative"
-      style={{
-        backgroundColor: '#0f0f0f',
-        backgroundImage: `linear-gradient(rgba(255,255,255,0.015) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.015) 1px, transparent 1px)`,
-        backgroundSize: '40px 40px',
-      }}
-    >
-      <div className="max-w-[880px] mx-auto px-6 py-16">
+    <div className="min-h-screen bg-base text-text-primary font-sans">
 
-        {/* ── HEADER ───────────────────────────────────── */}
-        <div className="border-t border-white/[0.06] mb-8 pt-8 text-center">
-          <div className="font-mono text-xs tracking-[0.2em] uppercase text-text-muted mb-4">
-            <span className="text-accent drop-shadow-[0_0_8px_#68FF7D] mr-2">●</span>TRUST LENS
+      {/* ── HEADER ─────────────────────────────────────────────── */}
+      <header className="px-5 md:px-8 xl:px-16 pt-10 pb-8 border-b border-white/[0.06]">
+        <div className="flex items-start justify-between">
+          <div>
+            <div className="font-mono text-[11px] tracking-[0.2em] uppercase text-text-dim mb-3 flex items-center gap-2">
+              <span className="text-accent drop-shadow-[0_0_6px_#68FF7D]">●</span>
+              TRUST LENS
+            </div>
+            <h1 className="text-3xl font-light tracking-tight text-text-primary max-w-xl">
+              Design for AI trust in defensive cybersecurity
+            </h1>
+            <p className="text-sm text-text-muted font-light mt-2 max-w-lg leading-relaxed">
+              Six evidence-based patterns for building AI interfaces analysts can trust — with a live analyzer to audit your design decisions.
+            </p>
           </div>
-
-          <h1 className="bg-gradient-to-b from-text-primary to-text-muted bg-clip-text text-transparent text-4xl font-light tracking-tight mb-3">
-            Design for AI trust in defensive cybersecurity
-          </h1>
-
-          <p className="text-sm text-text-muted font-light max-w-lg mx-auto leading-relaxed mb-2">
-            Trust patterns and live analysis for product designers building autonomous SOC interfaces.
-          </p>
-          <p className="font-mono text-xs text-text-dim mb-6">
-            Grounded in Google PAIR, Microsoft HAX, IBM Carbon for AI, and the WEF Trust Stack.
-          </p>
-
-          {/* Stat pills */}
-          <div className="flex justify-center gap-3">
-            {[
-              { value: '6',  label: 'Trust patterns' },
-              { value: '4',  label: 'Frameworks' },
-              { value: 'AI', label: 'Live analyzer' },
-            ].map(({ value, label }) => (
-              <div key={label} className="border border-white/[0.08] rounded-sm px-5 py-2.5 text-center">
-                <div className="font-mono text-lg text-accent font-medium leading-none mb-1">{value}</div>
-                <div className="font-mono text-[10px] text-text-dim uppercase tracking-wider">{label}</div>
-              </div>
-            ))}
+          <div className="font-mono text-[10px] text-text-dim text-right hidden md:block mt-1 leading-relaxed">
+            <div>Google PAIR · Microsoft HAX</div>
+            <div>IBM Carbon · WEF Trust Stack</div>
           </div>
         </div>
+      </header>
 
-        {/* ── TAB BAR ──────────────────────────────────── */}
-        <div className="border-b border-white/10 mb-3" role="tablist">
-          {[
-            { key: 'patterns',   label: 'Trust patterns' },
-            { key: 'analyzer',   label: 'Trust analyzer', badge: 'AI' },
-            { key: 'frameworks', label: 'Frameworks' },
-          ].map((tab) => (
+      {/* ── MAIN SPLIT PANEL ───────────────────────────────────── */}
+      <main className="flex flex-col lg:flex-row min-h-[calc(100vh-160px)]">
+
+        {/* LEFT — Trust Patterns */}
+        <div className="lg:w-[55%] border-r border-white/[0.06] px-5 md:px-8 xl:px-12 py-8 overflow-y-auto">
+          <div className="flex items-center justify-between mb-6">
+            <div>
+              <div className="font-mono text-[10px] tracking-[0.15em] uppercase text-text-dim mb-1">
+                Design patterns
+              </div>
+              <h2 className="text-base font-medium text-text-primary">
+                Trust patterns
+              </h2>
+            </div>
             <button
-              key={tab.key}
-              role="tab"
-              aria-selected={activeTab === tab.key}
-              onClick={() => setActiveTab(tab.key)}
-              className={[
-                'font-mono text-xs tracking-widest uppercase px-4 py-3 -mb-px border-b-2 mr-1 transition-colors duration-150 inline-flex items-center gap-1.5',
-                activeTab === tab.key
-                  ? 'text-text-primary border-accent'
-                  : 'text-text-muted border-transparent hover:text-text-primary',
-              ].join(' ')}
+              onClick={toggleAll}
+              className="font-mono text-[11px] text-accent hover:opacity-70 transition-opacity"
             >
-              {tab.label}
-              {tab.badge && (
-                <span className="border border-accent text-accent font-mono text-[10px] px-1.5 py-0.5 rounded-sm leading-none">
-                  {tab.badge}
-                </span>
-              )}
+              {allExpanded ? 'Collapse all' : 'Expand all'}
             </button>
+          </div>
+
+          {PATTERNS.map((pattern, index) => (
+            <PatternCard
+              key={pattern.id}
+              pattern={pattern}
+              index={index}
+              isOpen={openPatterns.has(pattern.id)}
+              onToggle={() => togglePattern(pattern.id)}
+            />
           ))}
         </div>
 
-        {/* ── TAB HINT ─────────────────────────────────── */}
-        <p className="font-mono text-[11px] text-text-dim mb-8">
-          Start with Trust patterns → test your UI in Trust analyzer → explore Frameworks for the theory
-        </p>
-
-        {/* ── TAB CONTENT ──────────────────────────────── */}
-
-        {activeTab === 'patterns' && (
-          <section role="tabpanel">
-            <div className="flex justify-between items-start mb-6">
-              <p className="text-sm text-text-muted max-w-sm leading-relaxed">
-                6 patterns for designing AI interfaces analysts can trust. Click any pattern to see examples.
-              </p>
-              <button
-                onClick={toggleAll}
-                className="font-mono text-xs text-accent hover:opacity-70 transition-opacity ml-4 shrink-0 mt-0.5"
-              >
-                {allExpanded ? 'Collapse all' : 'Expand all'}
-              </button>
+        {/* RIGHT — Trust Analyzer */}
+        <div className="lg:w-[45%] px-5 md:px-8 xl:px-12 py-8 lg:sticky lg:top-0 lg:h-screen lg:overflow-y-auto">
+          <div className="mb-6">
+            <div className="font-mono text-[10px] tracking-[0.15em] uppercase text-text-dim mb-1">
+              Live tool
             </div>
-            {PATTERNS.map((pattern, index) => (
-              <PatternCard
-                key={pattern.id}
-                pattern={pattern}
-                index={index}
-                isOpen={openPatterns.has(pattern.id)}
-                onToggle={() => togglePattern(pattern.id)}
-              />
-            ))}
-          </section>
-        )}
-
-        {activeTab === 'analyzer' && (
-          <section role="tabpanel">
-            <p className="text-sm text-text-muted mb-6 leading-relaxed">
-              Describe an AI-powered feature from your security product. The analyzer scores it against the six trust pillars and gives specific design recommendations.
+            <h2 className="text-base font-medium text-text-primary flex items-center gap-2">
+              Trust analyzer
+              <span className="border border-accent text-accent font-mono text-[10px] px-1.5 py-0.5 rounded-sm">AI</span>
+            </h2>
+            <p className="text-sm text-text-muted mt-1 leading-relaxed">
+              Describe a UI decision. Get an instant audit against all six trust patterns.
             </p>
-            <Analyzer input={analyzerInput} setInput={setAnalyzerInput} />
-          </section>
-        )}
+          </div>
+          <Analyzer input={analyzerInput} setInput={setAnalyzerInput} />
+        </div>
 
-        {activeTab === 'frameworks' && (
-          <section role="tabpanel">
-            <FrameworksTab />
-          </section>
-        )}
+      </main>
 
-        {/* ── FOOTER ───────────────────────────────────── */}
-        <footer className="border-t border-white/[0.06] mt-16 py-6 flex justify-between items-center">
-          <span className="font-mono text-xs text-text-dim">Built by Adam Goddenyu — AI-Native Senior Product Designer</span>
-          <span className="font-mono text-xs text-text-dim">Built with Claude Code + Cursor</span>
-        </footer>
+      {/* ── KNOWLEDGE BASE ─────────────────────────────────────── */}
+      <section className="border-t border-white/[0.06] px-5 md:px-8 xl:px-16 py-12">
+        <div className="mb-8">
+          <div className="font-mono text-[10px] tracking-[0.15em] uppercase text-text-dim mb-1">
+            Knowledge base
+          </div>
+          <h2 className="text-base font-medium text-text-primary">
+            Grounded in
+          </h2>
+          <p className="text-sm text-text-muted mt-1">
+            The four frameworks these patterns are derived from.
+          </p>
+        </div>
+        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4">
+          {FRAMEWORKS.map((fw, i) => (
+            <a
+              key={i}
+              href={fw.url}
+              target="_blank"
+              rel="noopener"
+              className="bg-surface border border-white/[0.06] rounded-sm p-5 hover:border-accent/20 transition-colors duration-150 group"
+            >
+              <div className="font-mono text-[10px] tracking-wider uppercase text-text-dim mb-2">
+                {fw.org}
+              </div>
+              <div className="text-sm font-medium text-text-primary mb-2 group-hover:text-accent transition-colors">
+                {fw.name}
+              </div>
+              <div className="text-xs text-text-muted leading-relaxed mb-3">
+                {fw.covers}
+              </div>
+              <div className="font-mono text-[11px] text-accent">
+                View →
+              </div>
+            </a>
+          ))}
+        </div>
+      </section>
 
-      </div>
+      {/* ── FOOTER ─────────────────────────────────────────────── */}
+      <footer className="border-t border-white/[0.06] px-5 md:px-8 xl:px-16 py-6 flex justify-between items-center">
+        <span className="font-mono text-xs text-text-dim">Built by Adam Goddenyu — AI-Native Senior Product Designer</span>
+        <span className="font-mono text-xs text-text-dim">Built with Claude Code + Cursor</span>
+      </footer>
+
     </div>
   )
 }
