@@ -5,54 +5,48 @@ import { useState } from 'react'
 const PATTERNS = [
   {
     id: 'trust-calibration',
-    category: 'Trust Calibration',
     title: 'Confidence calibration',
-    principle: 'The UI must change based on how certain the AI is. Different confidence = different layout, CTA, and tone.',
+    principle: 'UI layout, CTA, and tone must reflect AI certainty in real time.',
     do: "Show a muted 'Low confidence' badge and softer CTA when AI certainty is below 70%",
     dont: "Display the same bold 'Take action' button regardless of AI confidence score",
     frameworks: ['Google PAIR', 'IBM Carbon AI'],
   },
   {
     id: 'reasoning-visibility',
-    category: 'Reasoning Visibility',
     title: 'Chain of thought',
-    principle: "Show the AI's reasoning as a visual chain, not a paragraph. Each step is clickable and links to raw evidence.",
+    principle: 'Show reasoning as a visual chain. Each step links to raw evidence.',
     do: 'Render each reasoning step as a node in a visual chain with click-through to source data',
     dont: "Dump the AI's explanation as a wall of unstructured text with no links",
     frameworks: ['Microsoft HAX', 'WEF Trust Stack'],
   },
   {
     id: 'human-control',
-    category: 'Human Control',
     title: 'Human-in-the-loop override',
-    principle: "The AI will be wrong. 'Correct the AI' is a first-class feature, not an edge case.",
+    principle: 'Correcting the AI is a first-class feature, not a settings page.',
     do: "Place a visible 'Override' button on every AI decision, with a simple correction flow",
     dont: "Hide correction behind Settings > Advanced > Feedback, analysts won't find it under pressure",
     frameworks: ['Google PAIR', 'Microsoft HAX'],
   },
   {
     id: 'evidence-trail',
-    category: 'Evidence Trail',
     title: 'Auditability',
-    principle: 'Every AI decision must link to the raw data that caused it. One click. No new tab.',
+    principle: 'Every decision links to the data that caused it. One click, no new tab.',
     do: 'Inline expandable evidence panel: analyst sees the log line that triggered the alert',
     dont: "Link to a separate audit log page that breaks the analyst's flow and context",
     frameworks: ['IBM Carbon AI', 'WEF Trust Stack'],
   },
   {
     id: 'failure-design',
-    category: 'Failure Design',
     title: 'Graceful failure',
-    principle: 'Design for when the AI is wrong or unsure with the same care as the happy path.',
+    principle: 'The error state deserves the same design care as the happy path.',
     do: "Distinct 'AI unsure' state with a clear explanation and manual fallback option",
     dont: 'Show a generic error message or silently fall back to a default action',
     frameworks: ['Microsoft HAX', 'Google PAIR'],
   },
   {
     id: 'cognitive-load',
-    category: 'Cognitive Load',
     title: 'Alert fatigue reduction',
-    principle: 'Analysts see hundreds of alerts daily. Most are false positives. Real threats must break the visual pattern.',
+    principle: 'Real threats must visually break the pattern. Everything else trains analysts to ignore alerts.',
     do: 'Use strong visual disruption (color, size, motion) only for confirmed high-severity threats',
     dont: 'Style all alerts the same; analysts will start ignoring everything including real threats',
     frameworks: ['IBM Carbon AI', 'WEF Trust Stack'],
@@ -93,70 +87,70 @@ const ANALYZER_EXAMPLES = [
   "There's no way for analysts to correct an AI decision",
 ]
 
-// ── SVG Mockups ───────────────────────────────────────────────────────────────
+// ── SVG Mockups (60px height, compact thumbnails) ─────────────────────────────
 
 const DoVisual = ({ id }) => {
   if (id === 'trust-calibration') return (
-    <svg viewBox="0 0 200 80" className="w-full" fill="none" aria-hidden="true">
-      <rect x="8" y="8" width="184" height="64" rx="3" fill="#222" stroke="rgba(255,255,255,0.08)" strokeWidth="1"/>
-      <rect x="18" y="18" width="108" height="18" rx="2" fill="rgba(255,180,0,0.12)" stroke="rgba(255,180,0,0.4)" strokeWidth="1"/>
-      <text x="72" y="30.5" textAnchor="middle" fontSize="9" fill="#FFB400" fontFamily="monospace">Low confidence: 42%</text>
-      <rect x="18" y="44" width="88" height="16" rx="2" fill="rgba(255,255,255,0.05)" stroke="rgba(255,255,255,0.14)" strokeWidth="1"/>
-      <text x="62" y="55.5" textAnchor="middle" fontSize="8.5" fill="#6f6f6f" fontFamily="monospace">Review manually</text>
+    <svg viewBox="0 0 200 60" className="w-full" fill="none" aria-hidden="true">
+      <rect x="4" y="4" width="192" height="52" rx="3" fill="#222" stroke="rgba(255,255,255,0.08)" strokeWidth="0.7"/>
+      <rect x="12" y="12" width="110" height="15" rx="2" fill="rgba(255,180,0,0.12)" stroke="rgba(255,180,0,0.4)" strokeWidth="0.7"/>
+      <text x="67" y="23" textAnchor="middle" fontSize="7.5" fill="#FFB400" fontFamily="monospace">Low confidence: 42%</text>
+      <rect x="12" y="33" width="88" height="13" rx="2" fill="rgba(255,255,255,0.05)" stroke="rgba(255,255,255,0.14)" strokeWidth="0.7"/>
+      <text x="56" y="43" textAnchor="middle" fontSize="7" fill="#949494" fontFamily="monospace">Review manually</text>
     </svg>
   )
   if (id === 'reasoning-visibility') return (
-    <svg viewBox="0 0 200 80" className="w-full" fill="none" aria-hidden="true">
-      <rect x="10" y="28" width="44" height="24" rx="3" fill="#222" stroke="rgba(104,255,125,0.35)" strokeWidth="1"/>
-      <text x="32" y="43" textAnchor="middle" fontSize="7" fill="#a8a8a8" fontFamily="monospace">Login</text>
-      <line x1="54" y1="40" x2="70" y2="40" stroke="rgba(255,255,255,0.18)" strokeWidth="1"/>
-      <polygon points="70,37 76,40 70,43" fill="rgba(255,255,255,0.18)"/>
-      <rect x="76" y="28" width="48" height="24" rx="3" fill="#222" stroke="rgba(104,255,125,0.35)" strokeWidth="1"/>
-      <text x="100" y="43" textAnchor="middle" fontSize="7" fill="#a8a8a8" fontFamily="monospace">Escalate</text>
-      <line x1="124" y1="40" x2="140" y2="40" stroke="rgba(255,255,255,0.18)" strokeWidth="1"/>
-      <polygon points="140,37 146,40 140,43" fill="rgba(255,255,255,0.18)"/>
-      <rect x="146" y="28" width="46" height="24" rx="3" fill="#222" stroke="rgba(104,255,125,0.65)" strokeWidth="1.5"/>
-      <text x="169" y="43" textAnchor="middle" fontSize="7" fill="#68FF7D" fontFamily="monospace">Verdict</text>
+    <svg viewBox="0 0 200 60" className="w-full" fill="none" aria-hidden="true">
+      <rect x="8" y="18" width="44" height="22" rx="3" fill="#222" stroke="rgba(104,255,125,0.35)" strokeWidth="0.7"/>
+      <text x="30" y="32" textAnchor="middle" fontSize="7" fill="#a8a8a8" fontFamily="monospace">Login</text>
+      <line x1="52" y1="29" x2="66" y2="29" stroke="rgba(255,255,255,0.18)" strokeWidth="0.7"/>
+      <polygon points="66,26.5 71,29 66,31.5" fill="rgba(255,255,255,0.18)"/>
+      <rect x="72" y="18" width="48" height="22" rx="3" fill="#222" stroke="rgba(104,255,125,0.35)" strokeWidth="0.7"/>
+      <text x="96" y="32" textAnchor="middle" fontSize="7" fill="#a8a8a8" fontFamily="monospace">Escalate</text>
+      <line x1="120" y1="29" x2="134" y2="29" stroke="rgba(255,255,255,0.18)" strokeWidth="0.7"/>
+      <polygon points="134,26.5 139,29 134,31.5" fill="rgba(255,255,255,0.18)"/>
+      <rect x="140" y="18" width="52" height="22" rx="3" fill="#222" stroke="rgba(104,255,125,0.65)" strokeWidth="1"/>
+      <text x="166" y="32" textAnchor="middle" fontSize="7" fill="#68FF7D" fontFamily="monospace">Verdict</text>
     </svg>
   )
   if (id === 'human-control') return (
-    <svg viewBox="0 0 200 80" className="w-full" fill="none" aria-hidden="true">
-      <rect x="8" y="10" width="184" height="60" rx="3" fill="#222" stroke="rgba(255,255,255,0.08)" strokeWidth="1"/>
-      <rect x="18" y="20" width="52" height="13" rx="2" fill="rgba(255,107,107,0.14)" stroke="rgba(255,107,107,0.38)" strokeWidth="1"/>
-      <text x="44" y="30" textAnchor="middle" fontSize="7.5" fill="#FF6B6B" fontFamily="monospace">HIGH RISK</text>
-      <rect x="118" y="18" width="64" height="17" rx="2" fill="rgba(104,255,125,0.09)" stroke="rgba(104,255,125,0.45)" strokeWidth="1"/>
-      <text x="150" y="30" textAnchor="middle" fontSize="8" fill="#68FF7D" fontFamily="monospace">Override →</text>
-      <rect x="18" y="42" width="118" height="4" rx="1" fill="rgba(255,255,255,0.1)"/>
-      <rect x="18" y="50" width="80" height="4" rx="1" fill="rgba(255,255,255,0.07)"/>
+    <svg viewBox="0 0 200 60" className="w-full" fill="none" aria-hidden="true">
+      <rect x="4" y="4" width="192" height="52" rx="3" fill="#222" stroke="rgba(255,255,255,0.08)" strokeWidth="0.7"/>
+      <rect x="12" y="12" width="52" height="12" rx="2" fill="rgba(255,107,107,0.14)" stroke="rgba(255,107,107,0.38)" strokeWidth="0.7"/>
+      <text x="38" y="21.5" textAnchor="middle" fontSize="7" fill="#FF6B6B" fontFamily="monospace">HIGH RISK</text>
+      <rect x="112" y="11" width="72" height="14" rx="2" fill="rgba(104,255,125,0.09)" stroke="rgba(104,255,125,0.45)" strokeWidth="0.7"/>
+      <text x="148" y="21.5" textAnchor="middle" fontSize="7.5" fill="#68FF7D" fontFamily="monospace">Override →</text>
+      <rect x="12" y="32" width="118" height="3.5" rx="1" fill="rgba(255,255,255,0.1)"/>
+      <rect x="12" y="40" width="80" height="3.5" rx="1" fill="rgba(255,255,255,0.07)"/>
     </svg>
   )
   if (id === 'evidence-trail') return (
-    <svg viewBox="0 0 200 80" className="w-full" fill="none" aria-hidden="true">
-      <rect x="8" y="22" width="184" height="36" rx="3" fill="#222" stroke="rgba(255,255,255,0.08)" strokeWidth="1"/>
-      <rect x="18" y="31" width="86" height="4" rx="1" fill="rgba(255,255,255,0.14)"/>
-      <rect x="18" y="39" width="58" height="4" rx="1" fill="rgba(255,255,255,0.08)"/>
-      <rect x="122" y="28" width="62" height="16" rx="2" fill="rgba(104,255,125,0.07)" stroke="rgba(104,255,125,0.32)" strokeWidth="1"/>
-      <text x="153" y="39.5" textAnchor="middle" fontSize="7.5" fill="#68FF7D" fontFamily="monospace">Evidence ▾</text>
+    <svg viewBox="0 0 200 60" className="w-full" fill="none" aria-hidden="true">
+      <rect x="4" y="12" width="192" height="36" rx="3" fill="#222" stroke="rgba(255,255,255,0.08)" strokeWidth="0.7"/>
+      <rect x="14" y="21" width="86" height="3.5" rx="1" fill="rgba(255,255,255,0.14)"/>
+      <rect x="14" y="29" width="58" height="3.5" rx="1" fill="rgba(255,255,255,0.08)"/>
+      <rect x="116" y="18" width="72" height="14" rx="2" fill="rgba(104,255,125,0.07)" stroke="rgba(104,255,125,0.32)" strokeWidth="0.7"/>
+      <text x="152" y="28" textAnchor="middle" fontSize="7" fill="#68FF7D" fontFamily="monospace">Evidence ▾</text>
     </svg>
   )
   if (id === 'failure-design') return (
-    <svg viewBox="0 0 200 80" className="w-full" fill="none" aria-hidden="true">
-      <rect x="8" y="6" width="184" height="68" rx="3" fill="rgba(255,180,0,0.04)" stroke="rgba(255,180,0,0.28)" strokeWidth="1"/>
-      <rect x="18" y="14" width="64" height="14" rx="2" fill="rgba(255,180,0,0.14)" stroke="rgba(255,180,0,0.38)" strokeWidth="1"/>
-      <text x="50" y="24.5" textAnchor="middle" fontSize="8" fill="#FFB400" fontFamily="monospace">AI unsure</text>
-      <rect x="18" y="34" width="128" height="4" rx="1" fill="rgba(255,255,255,0.1)"/>
-      <rect x="18" y="42" width="88" height="4" rx="1" fill="rgba(255,255,255,0.07)"/>
-      <rect x="18" y="54" width="76" height="13" rx="2" fill="rgba(255,255,255,0.05)" stroke="rgba(255,255,255,0.18)" strokeWidth="1"/>
-      <text x="56" y="63.5" textAnchor="middle" fontSize="7.5" fill="#a8a8a8" fontFamily="monospace">Review manually</text>
+    <svg viewBox="0 0 200 60" className="w-full" fill="none" aria-hidden="true">
+      <rect x="4" y="2" width="192" height="56" rx="3" fill="rgba(255,180,0,0.04)" stroke="rgba(255,180,0,0.28)" strokeWidth="0.7"/>
+      <rect x="12" y="9" width="64" height="12" rx="2" fill="rgba(255,180,0,0.14)" stroke="rgba(255,180,0,0.38)" strokeWidth="0.7"/>
+      <text x="44" y="18.5" textAnchor="middle" fontSize="7.5" fill="#FFB400" fontFamily="monospace">AI unsure</text>
+      <rect x="12" y="27" width="128" height="3.5" rx="1" fill="rgba(255,255,255,0.1)"/>
+      <rect x="12" y="34" width="88" height="3.5" rx="1" fill="rgba(255,255,255,0.07)"/>
+      <rect x="12" y="43" width="76" height="12" rx="2" fill="rgba(255,255,255,0.05)" stroke="rgba(255,255,255,0.18)" strokeWidth="0.7"/>
+      <text x="50" y="52" textAnchor="middle" fontSize="7" fill="#a8a8a8" fontFamily="monospace">Review manually</text>
     </svg>
   )
   if (id === 'cognitive-load') return (
-    <svg viewBox="0 0 200 80" className="w-full" fill="none" aria-hidden="true">
-      {[6, 22, 38].map((y) => (
-        <rect key={y} x="8" y={y} width="184" height="12" rx="2" fill="#1c1c1c" stroke="rgba(255,255,255,0.06)" strokeWidth="1"/>
+    <svg viewBox="0 0 200 60" className="w-full" fill="none" aria-hidden="true">
+      {[3, 17, 31].map((y) => (
+        <rect key={y} x="4" y={y} width="192" height="11" rx="2" fill="#1c1c1c" stroke="rgba(255,255,255,0.06)" strokeWidth="0.7"/>
       ))}
-      <rect x="8" y="56" width="184" height="18" rx="2" fill="rgba(255,107,107,0.11)" stroke="rgba(255,107,107,0.48)" strokeWidth="1.5"/>
-      <text x="22" y="68" fontSize="8.5" fill="#FF6B6B" fontFamily="monospace" fontWeight="600">● CRITICAL THREAT</text>
+      <rect x="4" y="45" width="192" height="13" rx="2" fill="rgba(255,107,107,0.11)" stroke="rgba(255,107,107,0.48)" strokeWidth="1"/>
+      <text x="18" y="55" fontSize="7.5" fill="#FF6B6B" fontFamily="monospace" fontWeight="600">● CRITICAL THREAT</text>
     </svg>
   )
   return null
@@ -164,55 +158,55 @@ const DoVisual = ({ id }) => {
 
 const DontVisual = ({ id }) => {
   if (id === 'trust-calibration') return (
-    <svg viewBox="0 0 200 80" className="w-full" fill="none" aria-hidden="true">
-      <rect x="8" y="8" width="184" height="64" rx="3" fill="#222" stroke="rgba(255,255,255,0.08)" strokeWidth="1"/>
-      <rect x="18" y="30" width="92" height="20" rx="2" fill="#68FF7D"/>
-      <text x="64" y="44" textAnchor="middle" fontSize="9.5" fill="#0f0f0f" fontFamily="monospace" fontWeight="600">Take action</text>
+    <svg viewBox="0 0 200 60" className="w-full" fill="none" aria-hidden="true">
+      <rect x="4" y="4" width="192" height="52" rx="3" fill="#222" stroke="rgba(255,255,255,0.08)" strokeWidth="0.7"/>
+      <rect x="12" y="20" width="92" height="18" rx="2" fill="#68FF7D"/>
+      <text x="58" y="32.5" textAnchor="middle" fontSize="9" fill="#0f0f0f" fontFamily="monospace" fontWeight="600">Take action</text>
     </svg>
   )
   if (id === 'reasoning-visibility') return (
-    <svg viewBox="0 0 200 80" className="w-full" fill="none" aria-hidden="true">
-      <rect x="8" y="8" width="184" height="64" rx="3" fill="#222" stroke="rgba(255,255,255,0.08)" strokeWidth="1"/>
-      {[16, 23, 30, 37, 44, 51, 58].map((y, i) => (
-        <rect key={i} x="18" y={y} width={90 + (i % 4) * 18} height="4" rx="1" fill="rgba(255,255,255,0.1)"/>
+    <svg viewBox="0 0 200 60" className="w-full" fill="none" aria-hidden="true">
+      <rect x="4" y="4" width="192" height="52" rx="3" fill="#222" stroke="rgba(255,255,255,0.08)" strokeWidth="0.7"/>
+      {[11, 17, 23, 29, 35, 41].map((y, i) => (
+        <rect key={i} x="14" y={y} width={90 + (i % 4) * 18} height="3.5" rx="1" fill="rgba(255,255,255,0.1)"/>
       ))}
     </svg>
   )
   if (id === 'human-control') return (
-    <svg viewBox="0 0 200 80" className="w-full" fill="none" aria-hidden="true">
-      <rect x="8" y="10" width="184" height="60" rx="3" fill="#222" stroke="rgba(255,255,255,0.08)" strokeWidth="1"/>
-      <rect x="18" y="20" width="52" height="13" rx="2" fill="rgba(255,107,107,0.14)" stroke="rgba(255,107,107,0.38)" strokeWidth="1"/>
-      <text x="44" y="30" textAnchor="middle" fontSize="7.5" fill="#FF6B6B" fontFamily="monospace">HIGH RISK</text>
-      <circle cx="172" cy="26" r="2" fill="rgba(255,255,255,0.2)"/>
-      <circle cx="180" cy="26" r="2" fill="rgba(255,255,255,0.2)"/>
-      <circle cx="164" cy="26" r="2" fill="rgba(255,255,255,0.2)"/>
-      <rect x="18" y="42" width="118" height="4" rx="1" fill="rgba(255,255,255,0.1)"/>
-      <rect x="18" y="50" width="80" height="4" rx="1" fill="rgba(255,255,255,0.07)"/>
+    <svg viewBox="0 0 200 60" className="w-full" fill="none" aria-hidden="true">
+      <rect x="4" y="4" width="192" height="52" rx="3" fill="#222" stroke="rgba(255,255,255,0.08)" strokeWidth="0.7"/>
+      <rect x="12" y="12" width="52" height="12" rx="2" fill="rgba(255,107,107,0.14)" stroke="rgba(255,107,107,0.38)" strokeWidth="0.7"/>
+      <text x="38" y="21.5" textAnchor="middle" fontSize="7" fill="#FF6B6B" fontFamily="monospace">HIGH RISK</text>
+      <circle cx="172" cy="19" r="1.8" fill="rgba(255,255,255,0.2)"/>
+      <circle cx="180" cy="19" r="1.8" fill="rgba(255,255,255,0.2)"/>
+      <circle cx="164" cy="19" r="1.8" fill="rgba(255,255,255,0.2)"/>
+      <rect x="12" y="32" width="118" height="3.5" rx="1" fill="rgba(255,255,255,0.1)"/>
+      <rect x="12" y="40" width="80" height="3.5" rx="1" fill="rgba(255,255,255,0.07)"/>
     </svg>
   )
   if (id === 'evidence-trail') return (
-    <svg viewBox="0 0 200 80" className="w-full" fill="none" aria-hidden="true">
-      <rect x="8" y="22" width="184" height="36" rx="3" fill="#222" stroke="rgba(255,255,255,0.08)" strokeWidth="1"/>
-      <rect x="18" y="31" width="86" height="4" rx="1" fill="rgba(255,255,255,0.14)"/>
-      <rect x="18" y="39" width="58" height="4" rx="1" fill="rgba(255,255,255,0.08)"/>
-      <text x="158" y="37" textAnchor="middle" fontSize="7" fill="#3f3f3f" fontFamily="monospace">Audit log ↗</text>
+    <svg viewBox="0 0 200 60" className="w-full" fill="none" aria-hidden="true">
+      <rect x="4" y="12" width="192" height="36" rx="3" fill="#222" stroke="rgba(255,255,255,0.08)" strokeWidth="0.7"/>
+      <rect x="14" y="21" width="86" height="3.5" rx="1" fill="rgba(255,255,255,0.14)"/>
+      <rect x="14" y="29" width="58" height="3.5" rx="1" fill="rgba(255,255,255,0.08)"/>
+      <text x="162" y="28" textAnchor="middle" fontSize="7" fill="#757575" fontFamily="monospace">Audit log ↗</text>
     </svg>
   )
   if (id === 'failure-design') return (
-    <svg viewBox="0 0 200 80" className="w-full" fill="none" aria-hidden="true">
-      <rect x="8" y="6" width="184" height="68" rx="3" fill="#222" stroke="rgba(255,255,255,0.08)" strokeWidth="1"/>
-      <rect x="18" y="14" width="36" height="14" rx="2" fill="rgba(255,255,255,0.07)"/>
-      <text x="36" y="24.5" textAnchor="middle" fontSize="8" fill="#6f6f6f" fontFamily="monospace">Error</text>
-      <rect x="18" y="34" width="110" height="4" rx="1" fill="rgba(255,255,255,0.06)"/>
-      <rect x="18" y="42" width="70" height="4" rx="1" fill="rgba(255,255,255,0.04)"/>
+    <svg viewBox="0 0 200 60" className="w-full" fill="none" aria-hidden="true">
+      <rect x="4" y="2" width="192" height="56" rx="3" fill="#222" stroke="rgba(255,255,255,0.08)" strokeWidth="0.7"/>
+      <rect x="12" y="9" width="36" height="12" rx="2" fill="rgba(255,255,255,0.07)"/>
+      <text x="30" y="18.5" textAnchor="middle" fontSize="7.5" fill="#757575" fontFamily="monospace">Error</text>
+      <rect x="12" y="28" width="110" height="3.5" rx="1" fill="rgba(255,255,255,0.06)"/>
+      <rect x="12" y="36" width="70" height="3.5" rx="1" fill="rgba(255,255,255,0.04)"/>
     </svg>
   )
   if (id === 'cognitive-load') return (
-    <svg viewBox="0 0 200 80" className="w-full" fill="none" aria-hidden="true">
-      {[6, 22, 38, 54].map((y) => (
+    <svg viewBox="0 0 200 60" className="w-full" fill="none" aria-hidden="true">
+      {[3, 17, 31, 45].map((y) => (
         <g key={y}>
-          <rect x="8" y={y} width="184" height="12" rx="2" fill="#1c1c1c" stroke="rgba(255,107,107,0.28)" strokeWidth="1"/>
-          <text x="22" y={y + 8.5} fontSize="7.5" fill="#FF6B6B" fontFamily="monospace" opacity="0.55">● Alert</text>
+          <rect x="4" y={y} width="192" height="11" rx="2" fill="#1c1c1c" stroke="rgba(255,107,107,0.28)" strokeWidth="0.7"/>
+          <text x="18" y={y + 8} fontSize="7" fill="#FF6B6B" fontFamily="monospace" opacity="0.55">● Alert</text>
         </g>
       ))}
     </svg>
@@ -225,70 +219,61 @@ const DontVisual = ({ id }) => {
 function PatternCard({ pattern, isOpen, onToggle, index }) {
   return (
     <div
-      className={[
-        'border border-l-2 rounded-sm mb-3 cursor-pointer opacity-0 animate-fade-up',
-        'transition-colors duration-200 bg-surface',
-        isOpen
-          ? 'border-accent/20 border-l-accent'
-          : 'border-white/[0.06] border-l-accent/30 hover:border-accent/20 hover:border-l-accent/60',
-      ].join(' ')}
+      className="bg-surface border border-white/[0.06] rounded-sm mb-2 px-5 py-4 cursor-pointer hover:border-accent/20 transition-colors duration-150 opacity-0 animate-fade-up"
       style={{ animationDelay: `${index * 60}ms`, animationFillMode: 'forwards' }}
       onClick={onToggle}
       role="button"
       aria-expanded={isOpen}
     >
-      {/* Header row */}
-      <div className="flex justify-between items-start px-6 py-5">
+      {/* Collapsed row */}
+      <div className="flex justify-between items-center">
         <div className="flex-1 min-w-0 pr-4">
-          <div className="font-mono text-[10px] tracking-[0.15em] uppercase text-text-muted mb-1.5">
-            {pattern.category}
-          </div>
-          <div className="text-sm font-medium text-text-primary mb-1">
+          <div className="text-sm font-medium text-text-primary">
             {pattern.title}
           </div>
-          <div className="text-sm text-text-muted leading-relaxed">
+          <div className="text-xs text-text-muted mt-0.5 leading-relaxed">
             {pattern.principle}
           </div>
         </div>
-        <div className="flex items-center shrink-0 mt-1 gap-2">
-          <span className="font-mono text-[10px] text-text-muted">
-            {String(index + 1).padStart(2, '0')}
-          </span>
-          <span className={['text-accent text-sm transition-transform duration-150', isOpen ? 'rotate-180' : ''].join(' ')}>
-            ▾
-          </span>
+        <div className={['text-accent ml-4 shrink-0 transition-transform duration-150 text-xs', isOpen ? 'rotate-180' : ''].join(' ')}>
+          ▾
         </div>
       </div>
 
       {/* Expanded content */}
       {isOpen && (
-        <div className="px-6 pb-6 border-t border-white/[0.06]">
-          <div className="mt-4 grid grid-cols-2 gap-3">
+        <div className="mt-3 pt-3 border-t border-white/[0.06]">
+          <div className="grid grid-cols-2 gap-2 mb-4">
+
             {/* DO panel */}
-            <div className="bg-accent/[0.04] border border-accent/20 rounded-sm p-4">
-              <div className="flex items-center gap-2 mb-3">
-                <span className="text-accent text-xs">✓</span>
-                <span className="font-mono text-[10px] tracking-widest uppercase text-accent font-medium">Do</span>
+            <div className="bg-accent/[0.04] border border-accent/20 rounded-sm p-3">
+              <div className="flex items-center gap-1.5 mb-2">
+                <span className="text-accent text-[10px]">✓</span>
+                <span className="font-mono text-[10px] tracking-wider uppercase text-accent">Do</span>
               </div>
-              <DoVisual id={pattern.id} />
-              <p className="text-xs text-text-muted leading-relaxed mt-3">{pattern.do}</p>
+              <div className="mb-2 opacity-80">
+                <DoVisual id={pattern.id} />
+              </div>
+              <p className="text-xs text-text-muted leading-relaxed">{pattern.do}</p>
             </div>
 
             {/* DON'T panel */}
-            <div className="bg-danger/[0.04] border border-danger/20 rounded-sm p-4">
-              <div className="flex items-center gap-2 mb-3">
-                <span className="text-danger text-xs">✗</span>
-                <span className="font-mono text-[10px] tracking-widest uppercase text-danger font-medium">Don't</span>
+            <div className="bg-danger/[0.04] border border-danger/20 rounded-sm p-3">
+              <div className="flex items-center gap-1.5 mb-2">
+                <span className="text-danger text-[10px]">✗</span>
+                <span className="font-mono text-[10px] tracking-wider uppercase text-danger">Don't</span>
               </div>
-              <DontVisual id={pattern.id} />
-              <p className="text-xs text-text-muted leading-relaxed mt-3">{pattern.dont}</p>
+              <div className="mb-2 opacity-80">
+                <DontVisual id={pattern.id} />
+              </div>
+              <p className="text-xs text-text-muted leading-relaxed">{pattern.dont}</p>
             </div>
           </div>
 
           {/* Framework tags */}
-          <div className="flex flex-wrap gap-2 mt-4">
+          <div className="flex flex-wrap gap-1.5">
             {pattern.frameworks.map((fw) => (
-              <span key={fw} className="font-mono text-[10px] border border-white/20 text-text-muted px-2 py-1 rounded-sm">
+              <span key={fw} className="font-mono text-[10px] border border-white/20 text-text-muted px-2 py-0.5 rounded-sm">
                 {fw}
               </span>
             ))}
@@ -345,7 +330,7 @@ function Analyzer({ input, setInput }) {
         value={input}
         onChange={(e) => setInput(e.target.value)}
         onKeyDown={handleKeyDown}
-        placeholder="e.g. 'I'm showing AI confidence as a percentage in the alert card header'"
+        placeholder="Describe a UI decision and get an instant audit against all six trust patterns. e.g. I'm showing AI confidence as a percentage in the alert card header"
         className="w-full bg-surface border border-white/[0.06] rounded-sm p-4 text-sm text-text-primary placeholder-[#757575] font-sans resize-none h-32 focus:outline-none focus:border-accent/40 transition-colors duration-150 leading-relaxed"
       />
 
@@ -382,7 +367,6 @@ function Analyzer({ input, setInput }) {
           </div>
         )}
 
-        {/* Example prompts empty state */}
         {!result && !isAnalyzing && !error && (
           <div className="border border-white/[0.06] rounded-sm p-5 bg-surface">
             <p className="font-mono text-[10px] tracking-widest uppercase text-text-dim mb-3">
@@ -507,17 +491,11 @@ export default function TrustLens() {
 
         {/* RIGHT: Trust Analyzer */}
         <div className="lg:w-[45%] px-5 md:px-8 xl:px-12 py-8 lg:sticky lg:top-0 lg:h-screen lg:overflow-y-auto">
-          <div className="mb-6">
-            <div className="font-mono text-[10px] tracking-[0.15em] uppercase text-text-dim mb-1">
-              Live tool
-            </div>
+          <div className="mb-5">
             <h2 className="text-base font-medium text-text-primary flex items-center gap-2">
               Trust analyzer
               <span className="border border-accent text-accent font-mono text-[10px] px-1.5 py-0.5 rounded-sm">AI</span>
             </h2>
-            <p className="text-sm text-text-muted mt-1 leading-relaxed">
-              Describe a UI decision. Get an instant audit against all six trust patterns.
-            </p>
           </div>
           <Analyzer input={analyzerInput} setInput={setAnalyzerInput} />
         </div>
@@ -526,16 +504,8 @@ export default function TrustLens() {
 
       {/* ── KNOWLEDGE BASE ─────────────────────────────────────── */}
       <section className="border-t border-white/[0.06] px-5 md:px-8 xl:px-16 py-12">
-        <div className="mb-8">
-          <div className="font-mono text-[10px] tracking-[0.15em] uppercase text-text-dim mb-1">
-            Knowledge base
-          </div>
-          <h2 className="text-base font-medium text-text-primary">
-            Grounded in
-          </h2>
-          <p className="text-sm text-text-muted mt-1">
-            The four frameworks these patterns are derived from.
-          </p>
+        <div className="font-mono text-[10px] tracking-[0.15em] uppercase text-text-muted mb-6">
+          Knowledge base
         </div>
         <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4">
           {FRAMEWORKS.map((fw, i) => (
