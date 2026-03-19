@@ -27,7 +27,7 @@ Six evidence-based design patterns, grounded in Google PAIR, Microsoft HAX, IBM 
 
 ## Demo
 
-[LIVE DEMO LINK — add after Vercel deploy]
+https://trust-lens-6v1ie4db8-adamgo.vercel.app/
 
 ![Trust Lens Analyzer](public/screenshots/screenshot-analyzer.png)
 
