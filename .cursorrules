@@ -1,0 +1,37 @@
+# Trust Lens — Cursor Rules
+
+## Stack
+- React + Vite
+- Tailwind CSS v3 (custom colors: base, surface, accent, danger, text-primary, text-muted, text-dim)
+- IBM Plex Sans + IBM Plex Mono (Google Fonts)
+- Vercel serverless functions in /api/
+- Groq API (llama-3.3-70b-versatile) for AI features
+
+## Code style
+- Functional React components only, no classes
+- useState and useEffect hooks only
+- Tailwind classes only — zero inline styles except runtime dynamic values (animationDelay etc)
+- CommonJS in /api/ files (module.exports, not export default)
+- No TypeScript — plain JavaScript
+- Semantic HTML with aria attributes on interactive elements
+
+## Colors (never hardcode hex — use Tailwind tokens)
+- Background: bg-base (#0f0f0f)
+- Cards: bg-surface (#1a1a1a)
+- Accent: text-accent / border-accent (#68FF7D)
+- Danger: text-danger (#FF6B6B)
+- Primary text: text-text-primary (#f4f4f4)
+- Muted text: text-text-muted (#6f6f6f)
+- Dim text: text-text-dim (#3f3f3f)
+
+## Security rules
+- Never put API keys in frontend code
+- All external API calls go through /api/ functions
+- Always validate and sanitize input in API routes
+- Never log sensitive data
+
+## File structure
+/api/          — Vercel serverless functions
+/src/          — React components
+/public/       — Static assets
+App.jsx        — Main component (single file for now)
