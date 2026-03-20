@@ -17,40 +17,42 @@ async function takeScreenshots() {
   })
 
   const page = await browser.newPage()
-  await page.setViewport({ width: 1280, height: 900, deviceScaleFactor: 2 })
+  await page.setViewport({ width: 1440, height: 900, deviceScaleFactor: 2 })
 
-  // ── SCREENSHOT 1: Trust Patterns ──
-  console.log('Taking patterns screenshot...')
   await page.goto(BASE_URL, { waitUntil: 'networkidle0' })
-  await page.waitForSelector('.bg-surface', { timeout: 10000 })
+  await page.waitForSelector('[data-card]', { timeout: 10000 })
 
-  const cards = await page.$$('[role="button"]')
-  if (cards[0]) await cards[0].click()
-  await sleep(300)
-  if (cards[1]) await cards[1].click()
-  await sleep(300)
-  if (cards[2]) await cards[2].click()
-  await sleep(500)
+  // Wait for GSAP stagger to complete
+  await sleep(800)
 
+  // ── SCREENSHOT 1: Split panel — patterns collapsed (clean hero) ──
+  console.log('Taking hero screenshot...')
   await page.screenshot({ path: `${OUTPUT_DIR}/screenshot-patterns.png`, fullPage: false })
-  console.log('✓ patterns screenshot saved')
+  console.log('✓ screenshot-patterns.png saved')
 
-  // ── SCREENSHOT 2: Trust Analyzer ──
-  console.log('Taking analyzer screenshot...')
-  const tabs = await page.$$('[role="tab"]')
-  if (tabs[1]) await tabs[1].click()
+  // ── SCREENSHOT 2: Cards expanded ──
+  console.log('Taking expanded cards screenshot...')
+  const cards = await page.$$('[data-card]')
+  if (cards[0]) await cards[0].click()
   await sleep(500)
+  if (cards[1]) await cards[1].click()
+  await sleep(500)
+  if (cards[2]) await cards[2].click()
+  await sleep(600)
 
   await page.screenshot({ path: `${OUTPUT_DIR}/screenshot-analyzer.png`, fullPage: false })
-  console.log('✓ analyzer screenshot saved')
+  console.log('✓ screenshot-analyzer.png saved')
 
-  // ── SCREENSHOT 3: Frameworks ──
-  console.log('Taking frameworks screenshot...')
-  if (tabs[2]) await tabs[2].click()
-  await sleep(500)
+  // ── SCREENSHOT 3: Knowledge base (scroll to bottom) ──
+  console.log('Taking knowledge base screenshot...')
+  await page.evaluate(() => {
+    const section = document.querySelector('section')
+    if (section) section.scrollIntoView({ behavior: 'instant' })
+  })
+  await sleep(400)
 
   await page.screenshot({ path: `${OUTPUT_DIR}/screenshot-frameworks.png`, fullPage: false })
-  console.log('✓ frameworks screenshot saved')
+  console.log('✓ screenshot-frameworks.png saved')
 
   await browser.close()
   console.log('All screenshots saved to public/screenshots/')
